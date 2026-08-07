@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Subastas | Artista</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="auction-style.css" />
+</head>
+<body>
+    <!-- ===== NAVEGACIÓN ===== -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <span class="logo">🎨 My Art</span>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="gallery.html">Gallery</a></li>
+                <li><a href="auction.html" class="active">Auctions</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- ===== SECCIÓN DE SUBASTA ===== -->
+    <section class="auction-container">
+        
+        <!-- COLUMNA IZQUIERDA: Arte en subasta -->
+        <div class="auction-left">
+            <div class="art-card">
+                <img 
+                    src="https://via.placeholder.com/600x600/00bcd4/fff?text=Arte+en+Subasta" 
+                    alt="Obra en subasta" 
+                    class="art-image"
+                />
+                <div class="art-info">
+                    <h2 class="art-title">"Auction Adoptable"</h2>
+                    <p class="art-description">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+                        Vestibulum et ligula in nunc bibendum fringilla.
+                    </p>
+                    <div class="art-meta">
+                        <span class="art-price">💰 Oferta actual: <strong>$0 USD</strong></span>
+                        <span class="art-bids">👥 Ofertas: <strong>0</strong></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- COLUMNA DERECHA: Ofertas y formulario -->
+        <div class="auction-right">
+            
+            <!-- LISTA DE OFERTAS -->
+            <div class="bids-section">
+                <h3 class="bids-title">📋 Offers submitted</h3>
+                <div class="bids-list" id="bidsList">
+                    <!-- Las ofertas se generan con JavaScript -->
+                    <div class="bid-empty">
+                        <p>No offers yet. Be the first!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FORMULARIO PARA OFERTAR -->
+            <div class="bid-form-section">
+                <h3 class="form-title">✏️ Make an offer</h3>
+                <form id="bidForm" class="bid-form">
+                    
+                    <div class="form-group">
+                        <label for="bidName">Your name</label>
+                        <input 
+                            type="text" 
+                            id="bidName" 
+                            placeholder="Ej: Ana García" 
+                            required
+                        />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bidEmail">Contact email</label>
+                        <input 
+                            type="email" 
+                            id="bidEmail" 
+                            placeholder="ejemplo@correo.com" 
+                            required
+                        />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bidAmount">Offer in USD ($)</label>
+                        <input 
+                            type="number" 
+                            id="bidAmount" 
+                            placeholder="50" 
+                            min="1" 
+                            step="1"
+                            required
+                        />
+                    </div>
+
+                    <button type="submit" class="btn-submit-bid">
+                        🚀 Submit offer
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== PIE DE PÁGINA ===== -->
+    <footer class="footer">
+        <p>&copy; 2026 - Nea Tea. Todos los derechos reservados.</p>
+    </footer>
+
+    <script src="auction-script.js"></script>
+</body>
+</html>
