@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gallery | Artist</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <!-- ===== NAVEGACIÓN ===== -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <span class="logo">🎨 My Art</span>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="gallery.html" class="active">Gallery</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- ===== GALERÍA ===== -->
+<section class="gallery-section">
+    <h1 class="gallery-title">Gallery</h1>
+    <div class="gallery-grid" id="galleryGrid">
+        <!-- Cada imagen debe estar dentro de un contenedor gallery-item -->
+        <div class="gallery-item">
+            <img src="Images/dibujo1.png" alt="Dibujo 1" />
+        </div>
+        <div class="gallery-item">
+            <img src="Images/dibujo2.png" alt="Dibujo 2" />
+        </div>
+        <div class="gallery-item">
+            <img src="Images/dibujo3.png" alt="Dibujo 3" />
+        </div>
+        <!-- Añade más imágenes igual -->
+    </div>
+</section>
+
+    <!-- ===== LIGHTBOX (modal) ===== -->
+    <div class="lightbox" id="lightbox">
+        <span class="close-lightbox" id="closeLightbox">&times;</span>
+        <img class="lightbox-img" id="lightboxImg" src="" alt="Ampliada" />
+    </div>
+
+    <!-- ===== PIE DE PÁGINA ===== -->
+    <footer class="footer">
+        <p>&copy; 2026 - Artista Lorem. Todos los derechos reservados.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
