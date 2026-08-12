@@ -20,7 +20,7 @@ async function getAuctionData() {
     try {
         const { data: auction, error } = await supabaseClient
             .from('auctions')
-            .select('title, description, image_url, current_price, is_active')
+            .select('title, description, image_url, starting_price, current_price, is_active')
             .eq('id', AUCTION_ID)
             .single();
         
@@ -36,10 +36,10 @@ async function getAuctionData() {
 }
 
 // =====================================================
-// 4. OBTENER LA OFERTA MÁS ALTA
+// 4. OBTENER LA OFERTA MÁS ALTA DESDE LA TABLA BIDS
 // =====================================================
 
-async function getHighestBid() {
+async function getHighestBidFromBids() {
     try {
         const { data: bids, error } = await supabaseClient
             .from('bids')
@@ -58,7 +58,7 @@ async function getHighestBid() {
         }
         return 0;
     } catch (error) {
-        console.error('Error en getHighestBid:', error);
+        console.error('Error en getHighestBidFromBids:', error);
         return 0;
     }
 }
@@ -87,7 +87,7 @@ async function getBids() {
 }
 
 // =====================================================
-// 6. HACER UNA OFERTA (CON VALIDACIÓN MEJORADA)
+// 6. HACER UNA OFERTA (CORREGIDO)
 // =====================================================
 
 async function placeBid(name, email, amount) {
@@ -98,11 +98,11 @@ async function placeBid(name, email, amount) {
             return false;
         }
 
-        // 2. Obtener la oferta más alta actual
-        const highestBid = await getHighestBid();
-        console.log('Oferta más alta actual:', highestBid);
+        // 2. Obtener la oferta más alta actual desde la tabla bids
+        const highestBid = await getHighestBidFromBids();
+        console.log('💰 Oferta más alta actual en bids:', highestBid);
 
-        // 3. Obtener el precio inicial de la subasta
+        // 3. Obtener los datos de la subasta
         const auction = await getAuctionData();
         if (!auction) {
             alert('❌ Error al cargar la subasta. Intenta de nuevo.');
@@ -120,12 +120,13 @@ async function placeBid(name, email, amount) {
         // Si no hay ofertas, debe ser mayor o igual al precio inicial
         const minBid = highestBid > 0 ? highestBid : auction.starting_price;
         
-        console.log('Precio inicial:', auction.starting_price);
-        console.log('Mínimo permitido:', minBid);
+        console.log('📊 Precio inicial:', auction.starting_price);
+        console.log('🔝 Mínimo permitido:', minBid);
+        console.log('📝 Tu oferta:', amount);
 
         // 6. Validar que la oferta sea mayor al mínimo
         if (amount <= minBid) {
-            alert(`⚠️ La oferta debe ser mayor a $${minBid} USD`);
+            alert(`⚠️ La oferta debe ser mayor a $${minBid} USD (oferta más alta actual)`);
             return false;
         }
 
@@ -169,7 +170,7 @@ async function placeBid(name, email, amount) {
 }
 
 // =====================================================
-// 7. ACTUALIZAR INTERFAZ
+// 7. ACTUALIZAR INTERFAZ (CORREGIDO - USA LA OFERTA MÁS ALTA REAL)
 // =====================================================
 
 async function loadAuctionData() {
@@ -180,6 +181,15 @@ async function loadAuctionData() {
             document.getElementById('artDescription').textContent = 'Verifica que el ID sea correcto';
             return;
         }
+        
+        // OBTENER LA OFERTA MÁS ALTA REAL DESDE LA TABLA BIDS
+        const highestBid = await getHighestBidFromBids();
+        console.log('🏆 Oferta más alta REAL:', highestBid);
+        
+        // Determinar qué precio mostrar
+        // Si hay ofertas, mostrar la más alta. Si no, mostrar el precio inicial.
+        const displayPrice = highestBid > 0 ? highestBid : auction.starting_price;
+        console.log('💲 Precio a mostrar:', displayPrice);
         
         // Actualizar imagen
         const imgElement = document.getElementById('artImage');
@@ -192,8 +202,8 @@ async function loadAuctionData() {
         document.getElementById('artTitle').textContent = auction.title;
         document.getElementById('artDescription').textContent = auction.description || 'Sin descripción';
         
-        // Actualizar precio
-        document.getElementById('currentPrice').textContent = `$${auction.current_price} USD`;
+        // ACTUALIZAR PRECIO CON LA OFERTA MÁS ALTA REAL
+        document.getElementById('currentPrice').textContent = `$${displayPrice} USD`;
         
         // Actualizar estado
         const statusEl = document.getElementById('auctionStatus');
