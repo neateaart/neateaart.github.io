@@ -231,11 +231,11 @@ async function loadAuctionData() {
         if (auction.is_active) {
             statusEl.innerHTML = '<span style="color: #00b894;">✅ Subasta activa</span>';
             document.getElementById('submitBidBtn').disabled = false;
-            document.getElementById('submitBidBtn').textContent = '🚀 Enviar oferta';
+            document.getElementById('submitBidBtn').textContent = '🚀 Enviar oferta/Send offer';
         } else {
             statusEl.innerHTML = '<span style="color: #e17055;">🔒 Subasta cerrada</span>';
             document.getElementById('submitBidBtn').disabled = true;
-            document.getElementById('submitBidBtn').textContent = '🔒 Subasta cerrada';
+            document.getElementById('submitBidBtn').textContent = '🔒 Subasta cerrada/Auction closed';
         }
     } catch (error) {
         console.error('Error en loadAuctionData:', error);
@@ -259,7 +259,7 @@ function updateCountdown() {
     const diff = endDate - now;
     
     if (diff <= 0) {
-        endDateElement.innerHTML = '⏰ <strong>Subasta finalizada</strong>';
+        endDateElement.innerHTML = '⏰ <strong>Subasta finalizada/Auction closed</strong>';
         return;
     }
     
@@ -356,19 +356,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Validaciones
             if (!name || !email || !amount) {
-                alert('⚠️ Por favor, llena todos los campos.');
+                alert('⚠️ Por favor, llena todos los campos/Please fill in all the fields..');
                 return;
             }
 
             if (amount <= 0) {
-                alert('⚠️ La oferta debe ser mayor a $0.');
+                alert('⚠️ La oferta debe ser mayor a $0./The offer must be greater than $0.');
                 return;
             }
 
             // Deshabilitar botón mientras se procesa
             const btn = document.getElementById('submitBidBtn');
             btn.disabled = true;
-            btn.textContent = '⏳ Procesando...';
+            btn.textContent = '⏳ Procesando.../Processing...';
 
             // Hacer la oferta
             const success = await placeBid(name, email, amount);
@@ -378,19 +378,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 bidForm.reset();
                 
                 // Feedback visual
-                btn.textContent = '✅ ¡Oferta enviada!';
+                btn.textContent = '✅ ¡Oferta enviada!/¡Offer sent!';
                 btn.style.background = 'linear-gradient(135deg, #00b894, #00a381)';
                 
                 // Actualizar la lista de ofertas y datos
                 await refreshAll();
                 
                 setTimeout(() => {
-                    btn.textContent = '🚀 Enviar oferta';
+                    btn.textContent = '🚀 Enviar oferta/Send offer';
                     btn.style.background = '';
                     btn.disabled = false;
                 }, 2000);
             } else {
-                btn.textContent = '🚀 Enviar oferta';
+                btn.textContent = '🚀 Enviar oferta/Send offer';
                 btn.style.background = '';
                 btn.disabled = false;
             }
@@ -426,11 +426,11 @@ supabaseClient
             if (payload.new.is_active) {
                 statusEl.innerHTML = '<span style="color: #00b894;">✅ Subasta activa</span>';
                 document.getElementById('submitBidBtn').disabled = false;
-                document.getElementById('submitBidBtn').textContent = '🚀 Enviar oferta';
+                document.getElementById('submitBidBtn').textContent = '🚀 Enviar oferta/Active auction';
             } else {
                 statusEl.innerHTML = '<span style="color: #e17055;">🔒 Subasta cerrada</span>';
                 document.getElementById('submitBidBtn').disabled = true;
-                document.getElementById('submitBidBtn').textContent = '🔒 Subasta cerrada';
+                document.getElementById('submitBidBtn').textContent = '🔒 Subasta cerrada/Auction closed';
             }
             
             // Actualizar fecha si cambió
