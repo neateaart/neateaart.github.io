@@ -1,5 +1,5 @@
 // =====================================================
-// 1. CONFIGURACIÓN DE SUPABASE (YA CONFIGURADO)
+// 1. CONFIGURACIÓN DE SUPABASE
 // =====================================================
 
 const SUPABASE_URL = 'https://omaklvjndanwfdxsalkm.supabase.co';
@@ -7,17 +7,17 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const AUCTION_ID = '03ebbc88-6399-4325-81dd-f3211964cd75';
 
 // =====================================================
-// 2. INICIALIZAR SUPABASE
+// 2. INICIALIZAR SUPABASE (con nombre único)
 // =====================================================
 
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // =====================================================
 // 3. OBTENER DATOS DE LA SUBASTA
 // =====================================================
 
 async function getAuctionData() {
-    const { data: auction, error } = await supabase
+    const { data: auction, error } = await supabaseClient
         .from('auctions')
         .select('title, description, image_url, current_price, is_active')
         .eq('id', AUCTION_ID)
@@ -35,7 +35,7 @@ async function getAuctionData() {
 // =====================================================
 
 async function getBids() {
-    const { data: bids, error } = await supabase
+    const { data: bids, error } = await supabaseClient
         .from('bids')
         .select('bidder_name, bidder_email, amount, created_at')
         .eq('auction_id', AUCTION_ID)
@@ -54,7 +54,6 @@ async function getBids() {
 
 async function placeBid(name, email, amount) {
     try {
-        // 1. Obtener estado actual de la subasta
         const auction = await getAuctionData();
         
         if (!auction) {
@@ -62,20 +61,17 @@ async function placeBid(name, email, amount) {
             return false;
         }
         
-        // 2. Validar si está activa
         if (!auction.is_active) {
             alert('❌ Esta subasta ya está cerrada. No se aceptan más ofertas.');
             return false;
         }
         
-        // 3. Validar que la oferta sea mayor a la actual
         if (amount <= auction.current_price) {
             alert(`⚠️ La oferta debe ser mayor a $${auction.current_price} USD`);
             return false;
         }
         
-        // 4. Insertar la oferta en la tabla bids
-        const { error: bidError } = await supabase
+        const { error: bidError } = await supabaseClient
             .from('bids')
             .insert({
                 auction_id: AUCTION_ID,
@@ -86,8 +82,7 @@ async function placeBid(name, email, amount) {
         
         if (bidError) throw bidError;
         
-        // 5. Actualizar el current_price en auctions
-        const { error: updateError } = await supabase
+        const { error: updateError } = await supabaseClient
             .from('auctions')
             .update({ 
                 current_price: amount,
@@ -114,18 +109,12 @@ async function loadAuctionData() {
     const auction = await getAuctionData();
     if (!auction) return;
     
-    // Actualizar imagen
     document.getElementById('artImage').src = auction.image_url || 'https://via.placeholder.com/600x600/00bcd4/fff?text=Arte+en+Subasta';
     document.getElementById('artImage').alt = auction.title;
-    
-    // Actualizar título y descripción
     document.getElementById('artTitle').textContent = auction.title;
     document.getElementById('artDescription').textContent = auction.description || 'Sin descripción';
-    
-    // Actualizar precio
     document.getElementById('currentPrice').textContent = `$${auction.current_price} USD`;
     
-    // Actualizar estado
     const statusEl = document.getElementById('auctionStatus');
     if (auction.is_active) {
         statusEl.innerHTML = '<span style="color: #00b894;">✅ Subasta activa</span>';
@@ -150,7 +139,6 @@ async function loadBids() {
         return;
     }
     
-    // Generar HTML para cada oferta
     bidsList.innerHTML = bids.map((bid) => `
         <div class="bid-item">
             <div class="bidder-info">
@@ -182,7 +170,6 @@ bidForm.addEventListener('submit', async (e) => {
     const email = document.getElementById('bidEmail').value.trim();
     const amount = parseInt(document.getElementById('bidAmount').value);
 
-    // Validaciones
     if (!name || !email || !amount) {
         alert('⚠️ Por favor, llena todos los campos.');
         return;
@@ -193,23 +180,16 @@ bidForm.addEventListener('submit', async (e) => {
         return;
     }
 
-    // Deshabilitar botón mientras se procesa
     const btn = document.getElementById('submitBidBtn');
     btn.disabled = true;
     btn.textContent = '⏳ Procesando...';
 
-    // Hacer la oferta
     const success = await placeBid(name, email, amount);
 
     if (success) {
-        // Limpiar formulario
         bidForm.reset();
-        
-        // Feedback visual
         btn.textContent = '✅ ¡Oferta enviada!';
         btn.style.background = 'linear-gradient(135deg, #00b894, #00a381)';
-        
-        // Actualizar la lista de ofertas y datos
         await refreshAll();
         
         setTimeout(() => {
@@ -227,7 +207,7 @@ bidForm.addEventListener('submit', async (e) => {
 // 8. ESCUCHAR CAMBIOS EN TIEMPO REAL
 // =====================================================
 
-supabase
+supabaseClient
     .channel('auction-updates')
     .on(
         'postgres_changes',
@@ -238,11 +218,9 @@ supabase
             filter: `id=eq.${AUCTION_ID}`
         },
         (payload) => {
-            // Actualizar precio en tiempo real
             const newPrice = payload.new.current_price;
             document.getElementById('currentPrice').textContent = `$${newPrice} USD`;
             
-            // Actualizar estado
             const statusEl = document.getElementById('auctionStatus');
             if (payload.new.is_active) {
                 statusEl.innerHTML = '<span style="color: #00b894;">✅ Subasta activa</span>';
@@ -257,7 +235,7 @@ supabase
     )
     .subscribe();
 
-supabase
+supabaseClient
     .channel('bids-updates')
     .on(
         'postgres_changes',
