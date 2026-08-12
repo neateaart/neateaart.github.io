@@ -424,11 +424,11 @@ supabaseClient
             // Actualizar estado
             const statusEl = document.getElementById('auctionStatus');
             if (payload.new.is_active) {
-                statusEl.innerHTML = '<span style="color: #00b894;">✅ Subasta activa</span>';
+                statusEl.innerHTML = '<span style="color: #00b894;">✅ Subasta activa/Active auction</span>';
                 document.getElementById('submitBidBtn').disabled = false;
                 document.getElementById('submitBidBtn').textContent = '🚀 Enviar oferta/Active auction';
             } else {
-                statusEl.innerHTML = '<span style="color: #e17055;">🔒 Subasta cerrada</span>';
+                statusEl.innerHTML = '<span style="color: #e17055;">🔒 Subasta cerrada/Auction closed</span>';
                 document.getElementById('submitBidBtn').disabled = true;
                 document.getElementById('submitBidBtn').textContent = '🔒 Subasta cerrada/Auction closed';
             }
