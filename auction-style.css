@@ -388,3 +388,20 @@
     transform: none !important;
     box-shadow: none !important;
 }
+
+/* ===== FECHA DE TERMINACIÓN ===== */
+.art-end-date {
+    margin-top: 0.8rem;
+    padding: 0.5rem 1rem;
+    background: rgba(0, 188, 212, 0.08);
+    border-radius: 30px;
+    font-size: 0.95rem;
+    color: #1a1a1a;
+    text-align: center;
+    border: 1px solid rgba(0, 188, 212, 0.15);
+}
+
+.art-end-date strong {
+    color: #006064;
+    font-weight: 700;
+}

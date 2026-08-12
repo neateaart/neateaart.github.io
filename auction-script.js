@@ -13,14 +13,14 @@ const AUCTION_ID = '03ebbc88-6399-4325-81dd-f3211964cd75';
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // =====================================================
-// 3. OBTENER DATOS DE LA SUBASTA
+// 3. OBTENER DATOS DE LA SUBASTA (INCLUYE END_DATE)
 // =====================================================
 
 async function getAuctionData() {
     try {
         const { data: auction, error } = await supabaseClient
             .from('auctions')
-            .select('title, description, image_url, starting_price, current_price, is_active')
+            .select('title, description, image_url, starting_price, current_price, is_active, end_date')
             .eq('id', AUCTION_ID)
             .single();
         
@@ -87,7 +87,7 @@ async function getBids() {
 }
 
 // =====================================================
-// 6. HACER UNA OFERTA (CORREGIDO)
+// 6. HACER UNA OFERTA
 // =====================================================
 
 async function placeBid(name, email, amount) {
@@ -116,8 +116,6 @@ async function placeBid(name, email, amount) {
         }
 
         // 5. Determinar el mínimo permitido
-        // Si hay ofertas, la nueva debe ser mayor a la más alta
-        // Si no hay ofertas, debe ser mayor o igual al precio inicial
         const minBid = highestBid > 0 ? highestBid : auction.starting_price;
         
         console.log('📊 Precio inicial:', auction.starting_price);
@@ -170,7 +168,7 @@ async function placeBid(name, email, amount) {
 }
 
 // =====================================================
-// 7. ACTUALIZAR INTERFAZ (CORREGIDO - USA LA OFERTA MÁS ALTA REAL)
+// 7. ACTUALIZAR INTERFAZ (CON FECHA DE TERMINACIÓN)
 // =====================================================
 
 async function loadAuctionData() {
@@ -187,7 +185,6 @@ async function loadAuctionData() {
         console.log('🏆 Oferta más alta REAL:', highestBid);
         
         // Determinar qué precio mostrar
-        // Si hay ofertas, mostrar la más alta. Si no, mostrar el precio inicial.
         const displayPrice = highestBid > 0 ? highestBid : auction.starting_price;
         console.log('💲 Precio a mostrar:', displayPrice);
         
@@ -205,6 +202,30 @@ async function loadAuctionData() {
         // ACTUALIZAR PRECIO CON LA OFERTA MÁS ALTA REAL
         document.getElementById('currentPrice').textContent = `$${displayPrice} USD`;
         
+        // =============================================
+        // ACTUALIZAR FECHA DE TERMINACIÓN
+        // =============================================
+        const endDateElement = document.getElementById('endDate');
+        if (auction.end_date) {
+            const endDate = new Date(auction.end_date);
+            const options = { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            };
+            endDateElement.textContent = endDate.toLocaleDateString('es-ES', options);
+            
+            // Guardar fecha para el contador regresivo
+            endDateElement.setAttribute('data-end-date', auction.end_date);
+            
+            // Actualizar contador
+            updateCountdown();
+        } else {
+            endDateElement.textContent = 'No definida';
+        }
+        
         // Actualizar estado
         const statusEl = document.getElementById('auctionStatus');
         if (auction.is_active) {
@@ -220,6 +241,46 @@ async function loadAuctionData() {
         console.error('Error en loadAuctionData:', error);
     }
 }
+
+// =====================================================
+// 8. CONTADOR REGRESIVO
+// =====================================================
+
+function updateCountdown() {
+    const endDateElement = document.getElementById('endDate');
+    if (!endDateElement) return;
+    
+    // Obtener la fecha de terminación desde el atributo data
+    const endDateStr = endDateElement.getAttribute('data-end-date');
+    if (!endDateStr) return;
+    
+    const endDate = new Date(endDateStr);
+    const now = new Date();
+    const diff = endDate - now;
+    
+    if (diff <= 0) {
+        endDateElement.innerHTML = '⏰ <strong>Subasta finalizada</strong>';
+        return;
+    }
+    
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    
+    let text = '';
+    if (days > 0) text += `${days}d `;
+    if (hours > 0 || days > 0) text += `${hours}h `;
+    text += `${minutes}m`;
+    
+    endDateElement.innerHTML = `⏳ <strong>${text}</strong> restante`;
+}
+
+// Actualizar contador cada minuto
+setInterval(updateCountdown, 60000);
+
+// =====================================================
+// 9. CARGAR OFERTAS
+// =====================================================
 
 async function loadBids() {
     try {
@@ -255,12 +316,19 @@ async function loadBids() {
     }
 }
 
-// Función para escapar HTML y evitar XSS
+// =====================================================
+// 10. ESCAPAR HTML (seguridad)
+// =====================================================
+
 function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
 }
+
+// =====================================================
+// 11. REFRESCAR TODO
+// =====================================================
 
 async function refreshAll() {
     await loadAuctionData();
@@ -268,7 +336,7 @@ async function refreshAll() {
 }
 
 // =====================================================
-// 8. MANEJAR ENVÍO DEL FORMULARIO
+// 12. MANEJAR ENVÍO DEL FORMULARIO
 // =====================================================
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -334,10 +402,10 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // =====================================================
-// 9. ESCUCHAR CAMBIOS EN TIEMPO REAL
+// 13. ESCUCHAR CAMBIOS EN TIEMPO REAL
 // =====================================================
 
-// Escuchar cambios en la subasta (precio, estado)
+// Escuchar cambios en la subasta (precio, estado, fecha)
 supabaseClient
     .channel('auction-updates')
     .on(
@@ -363,6 +431,22 @@ supabaseClient
                 statusEl.innerHTML = '<span style="color: #e17055;">🔒 Subasta cerrada</span>';
                 document.getElementById('submitBidBtn').disabled = true;
                 document.getElementById('submitBidBtn').textContent = '🔒 Subasta cerrada';
+            }
+            
+            // Actualizar fecha si cambió
+            if (payload.new.end_date) {
+                const endDateElement = document.getElementById('endDate');
+                const endDate = new Date(payload.new.end_date);
+                const options = { 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                };
+                endDateElement.textContent = endDate.toLocaleDateString('es-ES', options);
+                endDateElement.setAttribute('data-end-date', payload.new.end_date);
+                updateCountdown();
             }
         }
     )
