@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Auctions | Adoptable</title>
+    <title>Subastas | Artista</title>
     <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="auction-style.css" />
 </head>
@@ -15,7 +15,7 @@
             <ul class="nav-links">
                 <li><a href="index.html">Home</a></li>
                 <li><a href="gallery.html">Gallery</a></li>
-                <li><a href="auction.html" class="active">Auctions</a></li>
+                <li><a href="auction.html" class="active">Subastas</a></li>
             </ul>
         </div>
     </nav>
@@ -27,19 +27,20 @@
         <div class="auction-left">
             <div class="art-card">
                 <img 
-                    src="https://via.placeholder.com/600x600/00bcd4/fff?text=Arte+en+Subasta" 
-                    alt="art image" 
+                    src="" 
+                    alt="Obra en subasta" 
                     class="art-image"
+                    id="artImage"
                 />
                 <div class="art-info">
-                    <h2 class="art-title">"Auction Adoptable"</h2>
-                    <p class="art-description">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
-                        Vestibulum et ligula in nunc bibendum fringilla.
-                    </p>
+                    <h2 class="art-title" id="artTitle">Cargando...</h2>
+                    <p class="art-description" id="artDescription">Cargando...</p>
                     <div class="art-meta">
-                        <span class="art-price">💰 Current offer: <strong>$0 USD</strong></span>
-                        <span class="art-bids">👥 Offers: <strong>0</strong></span>
+                        <span class="art-price">💰 Oferta actual: <strong id="currentPrice">$0 USD</strong></span>
+                        <span class="art-bids">👥 Ofertas: <strong id="totalBids">0</strong></span>
+                    </div>
+                    <div class="art-status" id="auctionStatus">
+                        <span style="color: #00b894;">✅ Subasta activa</span>
                     </div>
                 </div>
             </div>
@@ -50,22 +51,21 @@
             
             <!-- LISTA DE OFERTAS -->
             <div class="bids-section">
-                <h3 class="bids-title">📋 Offers submitted</h3>
+                <h3 class="bids-title">📋 Ofertas realizadas</h3>
                 <div class="bids-list" id="bidsList">
-                    <!-- Las ofertas se generan con JavaScript -->
                     <div class="bid-empty">
-                        <p>No offers yet. Be the first!</p>
+                        <p>Cargando ofertas...</p>
                     </div>
                 </div>
             </div>
 
             <!-- FORMULARIO PARA OFERTAR -->
             <div class="bid-form-section">
-                <h3 class="form-title">✏️ Make an offer</h3>
+                <h3 class="form-title">✏️ Haz tu oferta</h3>
                 <form id="bidForm" class="bid-form">
                     
                     <div class="form-group">
-                        <label for="bidName">Your name</label>
+                        <label for="bidName">Tu nombre</label>
                         <input 
                             type="text" 
                             id="bidName" 
@@ -75,7 +75,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="bidEmail">Contact email</label>
+                        <label for="bidEmail">Correo de contacto</label>
                         <input 
                             type="email" 
                             id="bidEmail" 
@@ -85,7 +85,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="bidAmount">Offer in USD ($)</label>
+                        <label for="bidAmount">Oferta en USD ($)</label>
                         <input 
                             type="number" 
                             id="bidAmount" 
@@ -96,8 +96,8 @@
                         />
                     </div>
 
-                    <button type="submit" class="btn-submit-bid">
-                        🚀 Submit offer
+                    <button type="submit" class="btn-submit-bid" id="submitBidBtn">
+                        🚀 Enviar oferta
                     </button>
                 </form>
             </div>
@@ -106,9 +106,13 @@
 
     <!-- ===== PIE DE PÁGINA ===== -->
     <footer class="footer">
-        <p>&copy; 2026 - Nea Tea. Todos los derechos reservados.</p>
+        <p>&copy; 2026 - Artista Lorem. Todos los derechos reservados.</p>
     </footer>
 
+    <!-- ===== SUPABASE SDK ===== -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- ===== TU SCRIPT ===== -->
     <script src="auction-script.js"></script>
 </body>
 </html>
