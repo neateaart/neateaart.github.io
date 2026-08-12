@@ -7,7 +7,7 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const AUCTION_ID = '03ebbc88-6399-4325-81dd-f3211964cd75';
 
 // =====================================================
-// 2. INICIALIZAR SUPABASE (con nombre único)
+// 2. INICIALIZAR SUPABASE
 // =====================================================
 
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -36,7 +36,35 @@ async function getAuctionData() {
 }
 
 // =====================================================
-// 4. OBTENER OFERTAS
+// 4. OBTENER LA OFERTA MÁS ALTA
+// =====================================================
+
+async function getHighestBid() {
+    try {
+        const { data: bids, error } = await supabaseClient
+            .from('bids')
+            .select('amount')
+            .eq('auction_id', AUCTION_ID)
+            .order('amount', { ascending: false })
+            .limit(1);
+        
+        if (error) {
+            console.error('Error al obtener oferta más alta:', error);
+            return 0;
+        }
+        
+        if (bids && bids.length > 0) {
+            return bids[0].amount;
+        }
+        return 0;
+    } catch (error) {
+        console.error('Error en getHighestBid:', error);
+        return 0;
+    }
+}
+
+// =====================================================
+// 5. OBTENER TODAS LAS OFERTAS
 // =====================================================
 
 async function getBids() {
@@ -59,32 +87,49 @@ async function getBids() {
 }
 
 // =====================================================
-// 5. HACER UNA OFERTA
+// 6. HACER UNA OFERTA (CON VALIDACIÓN MEJORADA)
 // =====================================================
 
 async function placeBid(name, email, amount) {
     try {
-        // Obtener estado actual de la subasta
+        // 1. Validar que la oferta sea un número válido
+        if (isNaN(amount) || amount <= 0) {
+            alert('⚠️ La oferta debe ser un número mayor a 0.');
+            return false;
+        }
+
+        // 2. Obtener la oferta más alta actual
+        const highestBid = await getHighestBid();
+        console.log('Oferta más alta actual:', highestBid);
+
+        // 3. Obtener el precio inicial de la subasta
         const auction = await getAuctionData();
-        
         if (!auction) {
             alert('❌ Error al cargar la subasta. Intenta de nuevo.');
             return false;
         }
-        
-        // Validar si está activa
+
+        // 4. Validar si la subasta está activa
         if (!auction.is_active) {
             alert('❌ Esta subasta ya está cerrada. No se aceptan más ofertas.');
             return false;
         }
+
+        // 5. Determinar el mínimo permitido
+        // Si hay ofertas, la nueva debe ser mayor a la más alta
+        // Si no hay ofertas, debe ser mayor o igual al precio inicial
+        const minBid = highestBid > 0 ? highestBid : auction.starting_price;
         
-        // Validar que la oferta sea mayor a la actual
-        if (amount <= auction.current_price) {
-            alert(`⚠️ La oferta debe ser mayor a $${auction.current_price} USD`);
+        console.log('Precio inicial:', auction.starting_price);
+        console.log('Mínimo permitido:', minBid);
+
+        // 6. Validar que la oferta sea mayor al mínimo
+        if (amount <= minBid) {
+            alert(`⚠️ La oferta debe ser mayor a $${minBid} USD`);
             return false;
         }
-        
-        // Insertar la oferta en la tabla bids
+
+        // 7. Insertar la oferta en la tabla bids
         const { error: bidError } = await supabaseClient
             .from('bids')
             .insert({
@@ -94,9 +139,12 @@ async function placeBid(name, email, amount) {
                 amount: amount
             });
         
-        if (bidError) throw bidError;
-        
-        // Actualizar el current_price en auctions
+        if (bidError) {
+            console.error('Error al insertar oferta:', bidError);
+            throw bidError;
+        }
+
+        // 8. Actualizar el current_price en auctions
         const { error: updateError } = await supabaseClient
             .from('auctions')
             .update({ 
@@ -105,8 +153,12 @@ async function placeBid(name, email, amount) {
             })
             .eq('id', AUCTION_ID);
         
-        if (updateError) throw updateError;
-        
+        if (updateError) {
+            console.error('Error al actualizar precio:', updateError);
+            throw updateError;
+        }
+
+        console.log('✅ Oferta de $' + amount + ' USD realizada por ' + name);
         return true;
         
     } catch (error) {
@@ -117,7 +169,7 @@ async function placeBid(name, email, amount) {
 }
 
 // =====================================================
-// 6. ACTUALIZAR INTERFAZ
+// 7. ACTUALIZAR INTERFAZ
 // =====================================================
 
 async function loadAuctionData() {
@@ -130,8 +182,11 @@ async function loadAuctionData() {
         }
         
         // Actualizar imagen
-        document.getElementById('artImage').src = auction.image_url || 'https://via.placeholder.com/600x600/00bcd4/fff?text=Arte+en+Subasta';
-        document.getElementById('artImage').alt = auction.title;
+        const imgElement = document.getElementById('artImage');
+        if (imgElement) {
+            imgElement.src = auction.image_url || 'https://via.placeholder.com/600x600/00bcd4/fff?text=Arte+en+Subasta';
+            imgElement.alt = auction.title;
+        }
         
         // Actualizar título y descripción
         document.getElementById('artTitle').textContent = auction.title;
@@ -161,6 +216,8 @@ async function loadBids() {
         const bids = await getBids();
         const bidsList = document.getElementById('bidsList');
         
+        if (!bidsList) return;
+        
         if (bids.length === 0) {
             bidsList.innerHTML = `
                 <div class="bid-empty">
@@ -175,8 +232,8 @@ async function loadBids() {
         bidsList.innerHTML = bids.map((bid) => `
             <div class="bid-item">
                 <div class="bidder-info">
-                    <span class="bidder-name">${bid.bidder_name}</span>
-                    <span class="bidder-email">${bid.bidder_email}</span>
+                    <span class="bidder-name">${escapeHtml(bid.bidder_name)}</span>
+                    <span class="bidder-email">${escapeHtml(bid.bidder_email)}</span>
                 </div>
                 <span class="bid-amount">$${bid.amount}</span>
             </div>
@@ -188,13 +245,20 @@ async function loadBids() {
     }
 }
 
+// Función para escapar HTML y evitar XSS
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
 async function refreshAll() {
     await loadAuctionData();
     await loadBids();
 }
 
 // =====================================================
-// 7. MANEJAR ENVÍO DEL FORMULARIO
+// 8. MANEJAR ENVÍO DEL FORMULARIO
 // =====================================================
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -204,9 +268,13 @@ document.addEventListener('DOMContentLoaded', function() {
         bidForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            const name = document.getElementById('bidName').value.trim();
-            const email = document.getElementById('bidEmail').value.trim();
-            const amount = parseInt(document.getElementById('bidAmount').value);
+            const nameInput = document.getElementById('bidName');
+            const emailInput = document.getElementById('bidEmail');
+            const amountInput = document.getElementById('bidAmount');
+            
+            const name = nameInput.value.trim();
+            const email = emailInput.value.trim();
+            const amount = parseInt(amountInput.value);
 
             // Validaciones
             if (!name || !email || !amount) {
@@ -256,9 +324,10 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // =====================================================
-// 8. ESCUCHAR CAMBIOS EN TIEMPO REAL
+// 9. ESCUCHAR CAMBIOS EN TIEMPO REAL
 // =====================================================
 
+// Escuchar cambios en la subasta (precio, estado)
 supabaseClient
     .channel('auction-updates')
     .on(
@@ -289,6 +358,7 @@ supabaseClient
     )
     .subscribe();
 
+// Escuchar nuevas ofertas
 supabaseClient
     .channel('bids-updates')
     .on(
@@ -300,7 +370,10 @@ supabaseClient
             filter: `auction_id=eq.${AUCTION_ID}`
         },
         () => {
+            // Recargar ofertas cuando alguien oferte
             loadBids();
+            // También recargar datos de la subasta para actualizar el precio
+            loadAuctionData();
         }
     )
     .subscribe();
