@@ -229,7 +229,7 @@ async function loadAuctionData() {
         // Actualizar estado
         const statusEl = document.getElementById('auctionStatus');
         if (auction.is_active) {
-            statusEl.innerHTML = '<span style="color: #00b894;">✅ Subasta activa</span>';
+            statusEl.innerHTML = '<span style="color: #00b894;">✅ Subasta activa/Active auction</span>';
             document.getElementById('submitBidBtn').disabled = false;
             document.getElementById('submitBidBtn').textContent = '🚀 Enviar oferta/Send offer';
         } else {
