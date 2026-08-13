@@ -124,7 +124,7 @@ async function placeBid(name, email, amount) {
 
         // 6. Validar que la oferta sea mayor al mínimo
         if (amount <= minBid) {
-            alert(`⚠️ La oferta debe ser mayor a $${minBid} USD (oferta más alta actual)`);
+            alert(`⚠️ La oferta debe ser mayor a $${minBid} USD / Your bid must be higher than $${minBid} USD`);
             return false;
         }
 
