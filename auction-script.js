@@ -94,7 +94,7 @@ async function placeBid(name, email, amount) {
     try {
         // 1. Validar que la oferta sea un número válido
         if (isNaN(amount) || amount <= 0) {
-            alert('⚠️ La oferta debe ser un número mayor a 0.');
+            alert('⚠️ La oferta debe ser un número mayor a 0/The bid must be a number greater than 0.');
             return false;
         }
 
@@ -105,13 +105,13 @@ async function placeBid(name, email, amount) {
         // 3. Obtener los datos de la subasta
         const auction = await getAuctionData();
         if (!auction) {
-            alert('❌ Error al cargar la subasta. Intenta de nuevo.');
+            alert('❌ Error al cargar la subasta. Intenta de nuevo./Error loading auction. Please try again');
             return false;
         }
 
         // 4. Validar si la subasta está activa
         if (!auction.is_active) {
-            alert('❌ Esta subasta ya está cerrada. No se aceptan más ofertas.');
+            alert('❌ Esta subasta ya está cerrada. No se aceptan más ofertas./This auction is now closed. No further bids are being accepted.');
             return false;
         }
 
@@ -162,7 +162,7 @@ async function placeBid(name, email, amount) {
         
     } catch (error) {
         console.error('Error al hacer la oferta:', error);
-        alert('❌ Ocurrió un error al procesar tu oferta. Intenta de nuevo.');
+        alert('❌ Ocurrió un error al procesar tu oferta. Intenta de nuevo./An error occurred while processing your offer. Please try again.');
         return false;
     }
 }
