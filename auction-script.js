@@ -304,7 +304,6 @@ async function loadBids() {
             <div class="bid-item">
                 <div class="bidder-info">
                     <span class="bidder-name">${escapeHtml(bid.bidder_name)}</span>
-                    <span class="bidder-email">${escapeHtml(bid.bidder_email)}</span>
                 </div>
                 <span class="bid-amount">$${bid.amount}</span>
             </div>
