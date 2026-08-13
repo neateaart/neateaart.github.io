@@ -233,7 +233,7 @@ async function loadAuctionData() {
             document.getElementById('submitBidBtn').disabled = false;
             document.getElementById('submitBidBtn').textContent = '🚀 Enviar oferta/Send offer';
         } else {
-            statusEl.innerHTML = '<span style="color: #e17055;">🔒 Subasta cerrada</span>';
+            statusEl.innerHTML = '<span style="color: #e17055;">🔒 Subasta cerrada/Auction closed</span>';
             document.getElementById('submitBidBtn').disabled = true;
             document.getElementById('submitBidBtn').textContent = '🔒 Subasta cerrada/Auction closed';
         }
