@@ -405,3 +405,19 @@
     color: #006064;
     font-weight: 700;
 }
+
+/* ===== MENSAJE DE OBJETIVO ===== */
+.Auction-Goal {
+    display: block;
+    width: 100%;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: #1a1a1a;
+    background: rgba(124, 58, 237, 0.08);
+    padding: 0.8rem 1rem;
+    border-radius: 16px;
+    border-left: 4px solid #7c3aed;
+    margin-bottom: 0.8rem;
+    text-align: center;
+    font-style: italic;
+}
