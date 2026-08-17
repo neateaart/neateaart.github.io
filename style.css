@@ -56,6 +56,16 @@ body {
     white-space: nowrap;
 }
 
+/* =============================================
+   PUNTOS AL INICIO DE CADA ENLACE
+   ============================================= */
+.nav-links a::before {
+    content: "• ";
+    color: rgba(255, 255, 255, 0.5);
+    font-weight: 300;
+    font-size: 1.2rem;
+}
+
 .nav-links a:hover,
 .nav-links a.active {
     background: rgba(255, 255, 255, 0.25);
@@ -351,6 +361,14 @@ body {
         white-space: nowrap;
     }
 
+    /* Mantener los puntos en móvil */
+    .nav-links a::before {
+        content: "• ";
+        color: rgba(255, 255, 255, 0.5);
+        font-weight: 300;
+        font-size: 1.2rem;
+    }
+
     .nav-container {
         flex-direction: row;
         flex-wrap: wrap;
@@ -373,6 +391,10 @@ body {
     .nav-links a {
         font-size: 0.85rem;
         padding: 0.5rem;
+    }
+
+    .nav-links a::before {
+        font-size: 1rem;
     }
 
     .logo {
@@ -424,6 +446,10 @@ body {
     .nav-links a {
         font-size: 0.75rem;
         padding: 0.4rem;
+    }
+
+    .nav-links a::before {
+        font-size: 0.9rem;
     }
 
     .logo {
