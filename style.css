@@ -61,6 +61,44 @@ body {
     background: rgba(255, 255, 255, 0.25);
 }
 
+/* =============================================
+   MENÚ HAMBURGUESA
+   ============================================= */
+
+/* === Botón hamburguesa === */
+.menu-toggle {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px 5px;
+    z-index: 200;
+}
+
+.menu-toggle span {
+    display: block;
+    width: 28px;
+    height: 3px;
+    background: #fff;
+    border-radius: 3px;
+    transition: all 0.3s ease;
+}
+
+/* === Animación del botón cuando está abierto === */
+.menu-toggle.active span:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 6px);
+}
+
+.menu-toggle.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.menu-toggle.active span:nth-child(3) {
+    transform: rotate(-45deg) translate(5px, -6px);
+}
+
 /* ===== TARJETAS REDONDEADAS (estilo común) ===== */
 .bio-card,
 .profile-frame,
@@ -277,57 +315,64 @@ body {
 }
 
 /* =============================================
-   ===== RESPONSIVE MEJORADO =====
+   ===== RESPONSIVE CON MENÚ HAMBURGUESA =====
    ============================================= */
 
-/* Tablets y pantallas pequeñas */
+/* === Tablets y pantallas medianas (≤768px) === */
 @media (max-width: 768px) {
-    .nav-container {
-        flex-direction: column;
-        gap: 0.5rem;
-        padding: 0.5rem 0;
+    /* Mostrar botón hamburguesa */
+    .menu-toggle {
+        display: flex;
     }
 
+    /* Ocultar menú por defecto en móvil */
     .nav-links {
-        gap: 0.5rem;
-        justify-content: center;
-        flex-wrap: wrap;
+        display: none;
         width: 100%;
+        flex-direction: column;
+        gap: 0.5rem;
+        padding: 1rem 0;
+        background: rgba(0, 0, 0, 0.15);
+        backdrop-filter: blur(6px);
+        border-radius: 16px;
+        margin-top: 0.5rem;
+    }
+
+    /* Mostrar menú cuando tiene la clase "open" */
+    .nav-links.open {
+        display: flex;
     }
 
     .nav-links a {
-        font-size: 0.8rem;
-        padding: 0.3rem 0.8rem;
+        width: 100%;
+        text-align: center;
+        padding: 0.6rem;
+        font-size: 0.95rem;
         white-space: nowrap;
-        border-radius: 20px;
+    }
+
+    .nav-container {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
     }
 
     .logo {
-        font-size: 1.3rem;
+        font-size: 1.2rem;
     }
 }
 
-/* Móviles pequeños */
+/* === Móviles pequeños (≤640px) === */
 @media (max-width: 640px) {
-    .nav-container {
-        flex-direction: column;
-        gap: 0.4rem;
-        padding: 0.4rem 0;
-    }
-
-    .nav-links {
-        gap: 0.2rem;
-        justify-content: center;
-        flex-wrap: wrap;
-        width: 100%;
+    .menu-toggle span {
+        width: 24px;
+        height: 2.5px;
     }
 
     .nav-links a {
-        font-size: 0.65rem;
-        padding: 0.25rem 0.5rem;
-        white-space: nowrap;
-        border-radius: 16px;
-        font-weight: 600;
+        font-size: 0.85rem;
+        padding: 0.5rem;
     }
 
     .logo {
@@ -369,21 +414,16 @@ body {
     }
 }
 
-/* Móviles muy pequeños */
+/* === Móviles muy pequeños (≤400px) === */
 @media (max-width: 400px) {
     .gallery-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: 0.8rem;
     }
 
-    .nav-links {
-        gap: 0.15rem;
-    }
-
     .nav-links a {
-        font-size: 0.55rem;
-        padding: 0.2rem 0.35rem;
-        border-radius: 12px;
+        font-size: 0.75rem;
+        padding: 0.4rem;
     }
 
     .logo {

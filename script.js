@@ -1,4 +1,41 @@
-// ===== DATOS DE IMÁGENES (cambia por tus URLs) =====
+// =============================================
+// MENÚ HAMBURGUESA
+// =============================================
+
+document.addEventListener('DOMContentLoaded', function() {
+    const menuToggle = document.getElementById('menuToggle');
+    const navLinks = document.getElementById('navLinks');
+
+    if (menuToggle && navLinks) {
+        // Abrir/cerrar menú al hacer clic
+        menuToggle.addEventListener('click', function() {
+            menuToggle.classList.toggle('active');
+            navLinks.classList.toggle('open');
+        });
+
+        // Cerrar menú al hacer clic en un enlace
+        navLinks.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', function() {
+                menuToggle.classList.remove('active');
+                navLinks.classList.remove('open');
+            });
+        });
+
+        // Cerrar menú al hacer clic fuera (opcional)
+        document.addEventListener('click', function(e) {
+            const isClickInside = navLinks.contains(e.target) || menuToggle.contains(e.target);
+            if (!isClickInside && navLinks.classList.contains('open')) {
+                menuToggle.classList.remove('active');
+                navLinks.classList.remove('open');
+            }
+        });
+    }
+});
+
+// =============================================
+// DATOS DE IMÁGENES (cambia por tus URLs)
+// =============================================
+
 const images = [
     'https://via.placeholder.com/600x600/ff6b6b/fff?text=Obra+1',
     'https://via.placeholder.com/600x600/4ecdc4/fff?text=Obra+2',
@@ -14,7 +51,10 @@ const images = [
     'https://via.placeholder.com/600x600/00cec9/fff?text=Obra+12',
 ];
 
-// ===== RENDERIZAR GALERÍA =====
+// =============================================
+// RENDERIZAR GALERÍA
+// =============================================
+
 const grid = document.getElementById('galleryGrid');
 if (grid) {
     images.forEach((url) => {
@@ -25,7 +65,10 @@ if (grid) {
     });
 }
 
-// ===== LIGHTBOX =====
+// =============================================
+// LIGHTBOX
+// =============================================
+
 const lightbox = document.getElementById('lightbox');
 const lightboxImg = document.getElementById('lightboxImg');
 const closeBtn = document.getElementById('closeLightbox');

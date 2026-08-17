@@ -9,17 +9,25 @@
 </head>
 <body class="special-auction">
     <!-- ===== NAVEGACIÓN ===== -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <span class="logo">🎨 My Art</span>
-            <ul class="nav-links">
-                 <li><a href="index.html">Home</a></li>
-                 <li><a href="gallery.html">Gallery</a></li>
-                 <li><a href="auction.html">Auctions</a></li>
-                 <li><a href="special-auction.html" class="active">Special</a></li>
-            </ul>
-        </div>
-    </nav>
+<nav class="navbar">
+    <div class="nav-container">
+        <span class="logo">🎨 My Art</span>
+
+        <!-- === BOTÓN HAMBURGUESA === -->
+        <button class="menu-toggle" id="menuToggle" aria-label="Menú">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+
+        <ul class="nav-links" id="navLinks">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="gallery.html">Gallery</a></li>
+            <li><a href="auction.html">Auctions</a></li>
+            <li><a href="special-auction.html" class="active">Special</a></li>
+        </ul>
+    </div>
+</nav>
 
     <!-- ===== SECCIÓN DE SUBASTA ESPECIAL ===== -->
     <section class="auction-container">
