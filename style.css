@@ -324,6 +324,59 @@ body {
     font-size: 0.9rem;
 }
 
+/* ===== FOOTER CONTENT ===== */
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: left;          /* alinea a la izquierda */
+}
+
+/* ===== CONTENEDOR DE BOTONES ===== */
+.footer-social {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 20px;                 /* 👈 separación entre X y Patreon */
+    margin-bottom: 16px;
+}
+
+/* ===== BOTONES ===== */
+.social-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    color: #fff;
+    background: #1a1a1a;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+}
+
+.social-btn svg { flex-shrink: 0; }
+
+.social-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.3);
+}
+
+/* Color al pasar el mouse */
+.social-btn.twitter:hover { background: #000; border-color: #000; }
+.social-btn.patreon:hover { background: #f96854; border-color: #f96854; }
+
+/* ===== RESPONSIVE (móvil) ===== */
+@media (max-width: 480px) {
+    .social-btn span { display: none; }   /* solo iconos en pantallas chicas */
+    .social-btn {
+        padding: 12px;
+        border-radius: 50%;
+    }
+}
+
+
 /* =============================================
    ===== RESPONSIVE CON MENÚ HAMBURGUESA =====
    ============================================= */
